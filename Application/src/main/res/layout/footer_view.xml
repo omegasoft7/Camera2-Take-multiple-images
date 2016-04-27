@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/camera1_control"
+    android:layout_width="match_parent"
+    android:layout_height="112dp"
+    android:layout_alignParentBottom="true"
+    android:background="@color/control_background">
+
+    <Button
+        android:id="@+id/footer_take_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:text="@string/picture" />
+
+    <Button
+        android:id="@+id/footer_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/done" />
+
+    <Button
+        android:id="@+id/footer_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:text="@string/cancel" />
+
+</FrameLayout>
