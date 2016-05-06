@@ -376,8 +376,12 @@ public class Camera2Fragment extends Fragment
         }
     }
 
-    public static Camera2Fragment newInstance() {
-        return new Camera2Fragment();
+    public static Camera2Fragment newInstance(int max) {
+        Camera2Fragment camera2Fragment = new Camera2Fragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("max", max);
+        camera2Fragment.setArguments(bundle);
+        return camera2Fragment;
     }
 
     @Override

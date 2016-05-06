@@ -33,11 +33,11 @@ public class CameraActivity extends Activity {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.container, Camera1Fragment.newInstance())
+                        .replace(R.id.container, Camera1Fragment.newInstance(5))
                         .commit();
             }else{
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.container, Camera1Fragment.newInstance())
+                        .replace(R.id.container, Camera2Fragment.newInstance(5))
                         .commit();
             }
 

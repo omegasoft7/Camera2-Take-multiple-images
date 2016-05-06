@@ -20,6 +20,12 @@ dependencies {
 
     //ButterKnife
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    //RecyclerView
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+
+    //Picasso image loader
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }
 
 android {

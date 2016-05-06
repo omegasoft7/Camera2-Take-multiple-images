@@ -16,13 +16,14 @@
 
 package com.camera2.lib.camera2;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -47,6 +48,9 @@ public class Camera1Fragment extends Fragment implements Camera2FragmentInterfac
 
     @Bind(R.id.camera1_footer)
     FooterView footerView;
+
+    private int max = 1;
+    private int count = 0;
 
     private SurfaceView preview = null;
     private SurfaceHolder previewHolder = null;
@@ -76,21 +80,24 @@ public class Camera1Fragment extends Fragment implements Camera2FragmentInterfac
             FileOutputStream outStream = null;
             try {
                 // Write to SD Card
-                String fileName = Helper.DCIMPath;
-                if (Helper.checkAndInitSDFolder(fileName)) {
-                    fileName += String.format("/%d.jpg", System.currentTimeMillis());
-                    outStream = new FileOutputStream(fileName);
-                    //outStream.write(data);
-                    cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-                    outStream.close();
-                    Log.d("fffff", "onPictureTaken - wrote bytes: " + data.length);
-                }
+                File outputDir = getActivity().getCacheDir(); // context being the Activity pointer
+                File outputFile = File.createTempFile(String.valueOf(System.currentTimeMillis()), ".jpg", outputDir);
+
+                outStream = new FileOutputStream(outputFile);
+                //outStream.write(data);
+                cameraBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                outStream.close();
+                Log.d("fffff", "onPictureTaken - wrote bytes: " + data.length);
+                Log.d("fffff", "onPictureTaken - fileName: " + outputFile.getAbsolutePath());
+
+                footerView.addImages(outputFile);
+
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 closeCamera();
             }
-            Log.d("fffffff", "onPictureTaken - jpeg");
+            Log.d("fffffff1", "onPictureTaken - jpeg");
         }
     };
     private boolean inPreview = false;
@@ -111,23 +118,12 @@ public class Camera1Fragment extends Fragment implements Camera2FragmentInterfac
         }
     };
 
-    public static Camera1Fragment newInstance() {
-        return new Camera1Fragment();
-    }
-
-    private static File getOutputMediaFile() {
-        File mediaStorageDir = new File(
-                Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "Sunil3");
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-
-                return null;
-            }
-        }
-
-        return new File(String.format(mediaStorageDir + File.separator + "%d.jpg", System.currentTimeMillis()));
+    public static Camera1Fragment newInstance(int max) {
+        Camera1Fragment camera1Fragment = new Camera1Fragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("max", max);
+        camera1Fragment.setArguments(bundle);
+        return camera1Fragment;
     }
 
     @Override
@@ -138,6 +134,9 @@ public class Camera1Fragment extends Fragment implements Camera2FragmentInterfac
 
         ButterKnife.setDebug(true);
         ButterKnife.bind(this, view);
+
+        this.max = getArguments().getInt("max", 1);
+        this.count = 0;
 
         return view;
     }
@@ -187,12 +186,24 @@ public class Camera1Fragment extends Fragment implements Camera2FragmentInterfac
     }
 
     private void closeCamera() {
-        //// TODO: 4/27/16 if max is reached
-        camera.release();
+        count++;
 
-        //// TODO: 4/27/16 send files by intent
-        //startPreview();
-        getActivity().finish();
+        if (count >= max) {
+            releaseCameraAndPreview();
+
+            Intent intent = new Intent();
+            intent.putExtra("size", footerView.getImagePaths().size());
+
+            for (int i = 0; i < footerView.getImagePaths().size(); i++) {
+                intent.putExtra("image" + (i + 1), footerView.getImagePaths().get(i).getAbsolutePath());
+            }
+
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        }
+
+        startPreview();
+
     }
 
     private void takePicture() {

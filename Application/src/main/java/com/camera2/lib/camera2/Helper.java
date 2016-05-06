@@ -10,13 +10,6 @@ import java.io.File;
  */
 public class Helper {
 
-    public static String libFileDirPath = android.os.Environment
-            .getExternalStorageDirectory().getAbsolutePath() + "/HaierVoiceCamera";
-
-    public static String DCIMPath = android.os.Environment
-            .getExternalStorageDirectory().getAbsolutePath() + "/DCIM/HaierVoiceCamera";
-
-
     /**
      * Shows a {@link Toast} on the UI thread.
      *
@@ -31,23 +24,5 @@ public class Helper {
                 }
             });
         }
-    }
-
-    /**
-     * check the path folder is already exist in sdcard or not,if not create them.
-     *
-     * @param patch
-     * @return Ture--already exist or create successfully ,False--create failure
-     */
-    public static boolean checkAndInitSDFolder(String patch) {
-        File dir = new File(patch);
-        if (!dir.exists()) {
-            if (dir.mkdirs()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
     }
 }
